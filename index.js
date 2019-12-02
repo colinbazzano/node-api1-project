@@ -46,6 +46,25 @@ server.get("/api/users", (req, res) => {
     });
 });
 
+server.get("/api/users/:id", (req, res) => {
+  const id = req.params.id;
+
+  db.findById(id)
+    .then(user => {
+      user
+        ? res.status(200).json(user)
+        : res
+            .status(404)
+            .json({ error: "The user with the specified ID does not exist. " });
+    })
+    .catch(error => {
+      console.log("error on GET /api/users/:id");
+      res
+        .status(500)
+        .json({ error: "The user information could not be retrieved." });
+    });
+});
+
 const port = 5000;
 server.listen(port, () => {
   console.log(`** API is running on port ${port} **`);
