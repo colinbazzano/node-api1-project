@@ -34,6 +34,7 @@ server.post("/api/users", (req, res) => {
     });
 });
 
+// GET!
 server.get("/api/users", (req, res) => {
   db.find()
     .then(users => {
@@ -46,6 +47,7 @@ server.get("/api/users", (req, res) => {
     });
 });
 
+// GET! ~by id~
 server.get("/api/users/:id", (req, res) => {
   const id = req.params.id;
 
@@ -65,6 +67,7 @@ server.get("/api/users/:id", (req, res) => {
     });
 });
 
+// DELETE!
 server.delete("/api/users/:id", (req, res) => {
   const id = req.params.id;
 
@@ -79,6 +82,32 @@ server.delete("/api/users/:id", (req, res) => {
     .catch(error => {
       res.status(500).json({ error: "The user could not be removed" });
     });
+});
+
+// PUT!
+server.put("/api/users/:id", (req, res) => {
+  const id = req.params.id;
+  const userData = req.body;
+
+  if (!userData.name && !userData.bio) {
+    res
+      .status(400)
+      .json({ error: "Please provide name and bio for the user." });
+  } else {
+    db.update(id, userData)
+      .then(updated => {
+        updated
+          ? db.findById(id).then(user => res.status(200).json(user))
+          : res.status(404).json({
+              message: "The user with the specified ID does not exist."
+            });
+      })
+      .catch(error =>
+        res
+          .status(500)
+          .json({ error: "The user information could not be modified." })
+      );
+  }
 });
 
 const port = 5000;
