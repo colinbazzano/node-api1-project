@@ -19,7 +19,7 @@ server.post("/api/users", (req, res) => {
   if (!userData.name || !userData.bio) {
     res
       .status(400)
-      .json({ errorMessage: "Please provide name and bio for the user." });
+      .json({ error: "Please provide name and bio for the user." });
   }
 
   db.insert(userData)
@@ -28,7 +28,21 @@ server.post("/api/users", (req, res) => {
     })
     .catch(error => {
       console.log("error on POST /api/users", error);
-      res.status(500).json({ errorMessage: "error adding the user" });
+      res.status(500).json({
+        error: "There was an error while saving the user to the database."
+      });
+    });
+});
+
+server.get("/api/users", (req, res) => {
+  db.find()
+    .then(users => {
+      res.status(200).json(users);
+    })
+    .catch(error => {
+      res
+        .status(500)
+        .json({ error: "The users information could not be retrieved." });
     });
 });
 
